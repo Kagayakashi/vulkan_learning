@@ -11,7 +11,8 @@ use vulkano::device::Features;
 use vulkano::buffer::BufferUsage;
 use vulkano::buffer::CpuAccessibleBuffer;
 
-use vulkano::command_buffer::AutoCommandBufferBuilder;
+use vulkano::command_buffer::{AutoCommandBufferBuilder, AutoCommandBuffer};
+use vulkano::command_buffer::CommandBuffer;
 
 use vulkano_win::VkSurfaceBuild;
 
@@ -72,7 +73,25 @@ fn main() {
     /*
     COMMAND BUFFER
      */
+    let source_content = 0 .. 64;
+    let source = CpuAccessibleBuffer::from_data(device.clone(), BufferUsage::all(), false, source_content)
+        .expect("Failed to create Source buffer");
 
+    let dest_content = 0 .. 64;
+    let dest = CpuAccessibleBuffer::from_data(device.clone(), BufferUsage::all(), false, dest_content)
+        .expect("Failed to create Source buffer");
+
+    let mut builder = AutoCommandBufferBuilder::new(device.clone(), queue.family())
+        .unwrap();
+    builder.copy_buffer(source.clone(), dest.clone())
+        .unwrap();
+
+    let command_buffer = builder.build()
+        .unwrap();
+    // Sumbission and Synchronization
+    let finished = command_buffer.execute(queue.clone())
+        .unwrap();
+    // TODO
     // COMMAND BUFFER
 
 
