@@ -9,9 +9,11 @@ use winit::{
     event::{Event, WindowEvent},
     event_loop::{ControlFlow, EventLoop},
     window::{
-        Window,
+        WindowBuilder,
     },
 };
+
+use vulkano::instance::debug::DebugCallback;
 
 struct HelloTriangleApplication { /* No fields */ }
 
@@ -39,9 +41,23 @@ impl HelloTriangleApplication {
 
 fn main() {
 
+
+    let instance = {
+        let extensions = vulkano_win::required_extensions();
+        Instance::new(None, &extensions, None)
+            .expect("failed to create Vulkan instance")
+    };
+
+    let _callback = DebugCallback::errors_and_warnings(&instance, |msg| {
+        println!("Debug callback: {:?}", msg.description);
+    }).ok();
+
     let event_loop = EventLoop::new();
-    let window = Window::new(&event_loop)
+    let window = WindowBuilder::new()
+        .with_title("My Window")
+        .build_vk_surface(&event_loop, instance.clone())
         .unwrap();
+
     event_loop.run(move |event, _, control_flow| {
         // ControlFlow::Poll continuously runs the event loop, even if the OS hasn't
         // dispatched any events. This is ideal for games and similar applications.
@@ -59,14 +75,6 @@ fn main() {
             } => {
                 println!("The close button was pressed; stopping");
                 *control_flow = ControlFlow::Exit
-            },
-            Event::MainEventsCleared => {
-                // Application update code.
-                // Queue a RedrawRequested event.
-                window.request_redraw();
-            },
-            Event::RedrawRequested(_) => {
-                // Redraw the application.
             },
             _ => (),
         }
