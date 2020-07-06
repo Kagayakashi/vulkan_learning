@@ -1,3 +1,3 @@
 pub fn test(){
-    println!("Vulkan included")
+    println!("Vulkan included.")
 }
