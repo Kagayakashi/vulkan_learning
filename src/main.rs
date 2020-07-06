@@ -30,16 +30,12 @@ impl HelloTriangleApplication {
 
     fn init_window(&mut self) {
         println!("Window initialization...");
-        /*
+
         let event_loop = EventLoop::new();
-        let _window = WindowBuilder::new()
-            .build(&event_loop)
+        let window = Window::new(&self.event_loop)
             .unwrap();
         self.event_loop = event_loop;
-        */
-        self.event_loop = EventLoop::new();
-        self.window = Window::new(&self.event_loop)
-            .unwrap();
+        self.window = window;
     }
 
     fn init_vulkan(&mut self) {
